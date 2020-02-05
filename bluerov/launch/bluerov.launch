@@ -1,0 +1,33 @@
+<!-- Launch BlueROV2 control, teleop, localization, and UI/visualization tools -->
+<launch>
+
+  <!-- Args -->
+  <arg name="record_bag" default="false" />
+  <arg name="enable_teleop" default="true" />
+  <arg name="enable_localization" default="true" />
+  <arg name="joystick" default="f310" />        <!-- Values: f310 or xbox -->
+
+
+  <!-- Start BlueROV2: pixhawk, camera, teleop -->
+  <include file="$(find bluerov_robot)/launch/bluerov_start.launch">
+    <arg name="enable_teleop" value="$(arg enable_teleop)"/>
+    <arg name="joystick" value="$(arg joystick)" />
+  </include>
+
+  <!-- Launch UI -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find bluerov)/cfg/bluerov.rviz"  />
+
+
+  <!-- Visual odometry and EKF localization -->
+  <group if="$(arg enable_localization)">
+      <!-- todo -->
+  </group>
+
+
+
+  <!-- Record all topics in bagfile -->
+  <group if="$(arg record_bag)">
+    <node pkg="rosbag" type="record" name="record" args="-a" />
+  </group>
+
+</launch>

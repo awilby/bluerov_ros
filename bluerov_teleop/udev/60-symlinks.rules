@@ -1,0 +1,5 @@
+# Symlink for Xbox Controller: link /dev/input/js0 to /dev/xboxcontroller
+KERNEL=="js0", SYMLINK+="xboxcontroller"
+
+# Symlink for Logitech Controller: link /dev/input/js1 to /dev/f310controller
+KERNEL=="js1", SYMLINK+="f310controller"

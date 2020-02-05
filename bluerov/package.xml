@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>bluerov</name>
+  <version>0.0.0</version>
+  <description>Top-level package for using BlueROV2 with ROS</description>
+
+  <maintainer email="awilby@eng.ucsd.edu">Antonella Wilby</maintainer>
+
+  <license>GPLv3</license>
+
+  <!-- <url type="website">http://wiki.ros.org/bluerov</url> -->
+
+
+  <!-- Author tags are optional, multiple are allowed, one per tag -->
+  <!-- Authors do not have to be maintainers, but could be -->
+  <!-- Example: -->
+  <!-- <author email="jane.doe@example.com">Jane Doe</author> -->
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+  <depend>rospy</depend>
+  <depend>raspicam</depend>
+  <depend>mavros_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+
+  <run_depend>robot_state_publisher</run_depend>
+  <run_depend>viso2_ros</run_depend>
+  <run_depend>robot_localization</run_depend>
+
+
+</package>

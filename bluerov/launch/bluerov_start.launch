@@ -1,0 +1,18 @@
+<launch>
+
+  <arg name="enable_teleop" default="true" />
+  <arg name="joystick" default="f310" />
+
+  <!-- Start blueauv control and connect to pixhawk -->
+  <include file="$(find bluerov)/launch/bluerov_mavros.launch" />
+
+  <!-- If teleoperation enabled, start teleop node -->
+  <group if="$(arg enable_teleop)">
+      <include file="$(find bluerov_teleop)/launch/teleop_$(arg joystick).launch" />
+  </group>
+
+  <!-- Start the raspberry pi camera node -->
+  <include file="$(find bluerov)/launch/front_camera.launch" />
+
+
+</launch>

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>bluerov_teleop</name>
+  <version>1.0.0</version>
+  <description>Joystick teleoperation for BlueROV2</description>
+
+  <maintainer email="awilby@eng.ucsd.edu">Antonella Wilby</maintainer>
+
+  <license>GPLv3</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+  <depend>joy</depend>
+  <depend>message_generation</depend>
+  <depend>dynamic_reconfigure</depend>
+  <depend>mavros_msgs</depend>
+
+  <run_depend>bluerov_ros</run_depend>
+
+</package>
