@@ -20,7 +20,15 @@ We also recommend installing `catkin_tools`, which includes some nicer build too
 ### Install Dependencies
 
 After installing ROS, also install the following packages (these instructions assume you are using Ubuntu Mate and are installing the packages in the apt repositories; Raspbian users must compile from source): 
-`sudo apt-get install ros-kinetic-joy ros-kinetic-robot-state-publisher`
+
+`sudo apt-get install ros-kinetic-joy ros-kinetic-robot-state-publisher ros-kinetic-robot-localization`
+
+You will also need raspicam, for getting images from the front camera, and viso2_ros, if you want to perform visual odometry. These will need to be compiled from source. From <your_catkin_workspace>/src:
+
+```
+git clone https://github.com/srv/viso2.git
+git clone https://github.com/fpasteau/raspicam_node.git
+```
 
 
 ### Install bluerov_ros
@@ -34,3 +42,10 @@ git clone https://github.com/awilby/bluerov_ros.git
 cd ..
 catkin build 
 ```
+
+## Setup
+
+
+### Install udev rules
+
+todo
