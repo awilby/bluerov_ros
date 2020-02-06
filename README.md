@@ -43,6 +43,11 @@ cd ..
 catkin build 
 ```
 
+### A Note on "Optional" Dependencies
+
+todo: viso2, robot_localization
+
+
 ## Setup
 
 
