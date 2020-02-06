@@ -19,7 +19,7 @@
   <!-- Robot State Publisher -->
 
   <!-- Load the urdf into the parameter server. -->
-   <param name="diver_rig_air" textfile="$(find bluerov_robot)/urdf/bluerov.urdf"/>
+   <param name="bluerov" textfile="$(find bluerov_robot)/urdf/bluerov.urdf"/>
 
    <!-- Publish transforms from urdf -->
    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" >
