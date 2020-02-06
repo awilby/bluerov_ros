@@ -16,6 +16,8 @@ We also recommend installing `catkin_tools`, which includes some nicer build too
 `sudo apt-get install python-catkin-tools`
 
 
+Make sure to create a catkin workspace by following the instructions in [ROS Environment Setup](http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment).
+
 
 ### Install Dependencies
 
@@ -32,8 +34,6 @@ git clone https://github.com/fpasteau/raspicam_node.git
 
 
 ### Install bluerov_ros
-
-When you installed ROS, you should have created a catkin workspace. If not, please complete the [ROS Environment Setup](http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment).
 
 In <your_catkin_workspace>/src, clone this repository:
 
