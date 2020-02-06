@@ -8,9 +8,10 @@ add_compile_options(-std=c++11)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   joy
-  message_generation
   dynamic_reconfigure
   mavros_msgs
+  message_generation
+  bluerov_robot
 )
 
 ################################################
@@ -20,23 +21,13 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate dynamic reconfigure parameters in the 'cfg' folder
 generate_dynamic_reconfigure_options(
   cfg/xbox_joy.cfg
-
 )
 
 ###################################
 ## catkin specific configuration ##
 ###################################
-## The catkin_package macro generates cmake config files for your package
-## Declare things to be passed to dependent projects
-## INCLUDE_DIRS: uncomment this if your package contains header files
-## LIBRARIES: libraries you create in this project that dependent projects also need
-## CATKIN_DEPENDS: catkin_packages dependent projects also need
-## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-INCLUDE_DIRS include
-#  LIBRARIES bluerov_teleop
-#  CATKIN_DEPENDS joy roscpp
-#  DEPENDS system_lib
+  INCLUDE_DIRS include
 )
 
 ###########
@@ -48,8 +39,19 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
 )
+
 add_executable(bluerov_teleop src/bluerov_teleop.cpp)
-add_dependencies(bluerov_teleop ${PROJECT_NAME}_generate_messages_cpp bluerov_teleop_gencfg)
+add_dependencies(bluerov_teleop ${${PROJECT_NAME}_EXPORTED_TARGETS})
+add_dependencies(bluerov_teleop ${catkin_EXPORTED_TARGETS})
+
+
+
+#add_dependencies(bluerov_teleop ${PROJECT_NAME}_EXPORTED_TARGETS ${PROJECT_NAME}_gencfg)
+
+
+
+#add_dependencies(${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(bluerov_teleop ${PROJECT_NAME}_generate_messages_cpp bluerov_teleop_gencfg)
 target_link_libraries(bluerov_teleop ${catkin_LIBRARIES})
 
 #############

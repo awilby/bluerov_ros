@@ -10,12 +10,12 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
+  <build_depend>message_generation</build_depend>
   <depend>roscpp</depend>
   <depend>joy</depend>
-  <depend>message_generation</depend>
   <depend>dynamic_reconfigure</depend>
   <depend>mavros_msgs</depend>
-
-  <run_depend>bluerov_ros</run_depend>
+  <depend>bluerov_robot</depend>
+  <exec_depend>message_runtime</exec_depend>
 
 </package>

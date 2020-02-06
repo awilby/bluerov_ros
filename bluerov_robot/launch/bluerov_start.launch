@@ -1,0 +1,29 @@
+<!-- Launches processes to start BlueROV: Pixhawk, camera, teleop, etc. -->
+<launch>
+
+  <arg name="enable_teleop" default="true" />
+  <arg name="joystick" default="f310" />
+
+  <!-- Start blueauv control and connect to pixhawk -->
+  <include file="$(find bluerov_robot)/launch/bluerov_mavros.launch" />
+
+  <!-- If teleoperation enabled, start teleop node -->
+  <group if="$(arg enable_teleop)">
+      <include file="$(find bluerov_teleop)/launch/teleop_$(arg joystick).launch" />
+  </group>
+
+  <!-- Start the raspberry pi camera node -->
+  <include file="$(find bluerov_robot)/launch/front_camera.launch" />
+
+
+  <!-- Robot State Publisher -->
+
+  <!-- Load the urdf into the parameter server. -->
+   <param name="diver_rig_air" textfile="$(find bluerov_robot)/urdf/bluerov.urdf"/>
+
+   <!-- Publish transforms from urdf -->
+   <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" >
+     <remap from="robot_description" to="bluerov" />
+   </node>
+
+</launch>

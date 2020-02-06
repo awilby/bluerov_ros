@@ -1,14 +1,15 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>bluerov</name>
+  <name>bluerov_robot</name>
   <version>0.0.0</version>
-  <description>Top-level package for using BlueROV2 with ROS</description>
+  <description>The bluerov_robot package</description>
 
   <maintainer email="awilby@eng.ucsd.edu">Antonella Wilby</maintainer>
 
+
   <license>GPLv3</license>
 
-  <!-- <url type="website">http://wiki.ros.org/bluerov</url> -->
+  <!-- <url type="website">http://wiki.ros.org/bluerov_robot</url> -->
 
 
   <!-- Author tags are optional, multiple are allowed, one per tag -->
@@ -16,15 +17,18 @@
   <!-- Example: -->
   <!-- <author email="jane.doe@example.com">Jane Doe</author> -->
 
-  <buildtool_depend>catkin</buildtool_depend>
 
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>message_generation</build_depend>
+  <depend>mavros</depend>
+  <depend>mavros_msgs</depend>
   <depend>roscpp</depend>
   <depend>rospy</depend>
   <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
-
-  <exec_depend>viso2_ros</exec_depend>
-  <exec_depend>robot_localization</exec_depend>
-
+  <depend>diagnostic_msgs</depend>
+  <exec_depend>raspicam</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
 
 </package>
