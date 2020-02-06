@@ -1,0 +1,17 @@
+<launch>
+
+    <!-- Robot State Publisher -->
+
+
+
+    <!-- Load the urdf into the parameter server. -->
+     <param name="bluerov" textfile="$(find bluerov_robot)/urdf/bluerov.urdf"/>
+
+     <!-- Publish transforms from urdf -->
+     <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" >
+       <remap from="robot_description" to="bluerov" />
+     </node>
+
+     <node pkg="tf" type="static_transform_publisher" name="map_broadcaster" args="1 0 0 0 0 0 1 map base_link 100" />
+
+</launch>

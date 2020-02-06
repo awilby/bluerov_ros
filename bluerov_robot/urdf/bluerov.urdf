@@ -3,17 +3,14 @@
 <robot name="bluerov">
   <link name="base_link">
     <visual>
-      <geometry>
-        <box size="0.235 0.175 .005"/>
-      </geometry>
-      <origin xyz="0 0 0"/>
-      <material name="black">
-        <color rgba="0 0 0 1"/>
-      </material>
+        <geometry>
+            <mesh filename="package://bluerov_robot/robot/bluerov2.dae"/>
+        </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0" />
     </visual>
   </link>
 
-  <link name="fcu">
+  <!--<link name="fcu">
     <visual>
       <geometry>
         <box size="0.10 .05 .01"/>
@@ -22,7 +19,7 @@
         <color rgba="1 0 0 1"/>
       </material>
     </visual>
-  </link>
+</link>-->
 
   <!-- <link name="enclosure">
     <visual>
@@ -53,7 +50,7 @@
     </visual>
   </link> -->
 
-  <link name="thruster0">
+  <!--<link name="thruster0">
     <visual>
       <geometry>
         <cylinder length="0.100" radius="0.048"/>
@@ -75,7 +72,7 @@
     <parent link="base_link"/>
     <child link="fcu"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
-  </joint>
+</joint>-->
 
   <!-- <joint name="base_link_to_camera_link" type="fixed">
     <parent link="base_link"/>

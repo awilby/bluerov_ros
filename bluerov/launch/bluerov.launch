@@ -3,7 +3,7 @@
 
   <!-- Args -->
   <arg name="record_bag" default="false" />
-  <arg name="enable_teleop" default="true" />
+  <arg name="enable_teleop" default="false" />
   <arg name="enable_localization" default="true" />
   <arg name="joystick" default="f310" />        <!-- Values: f310 or xbox -->
 
@@ -20,7 +20,21 @@
 
   <!-- Visual odometry and EKF localization -->
   <group if="$(arg enable_localization)">
-      <!-- todo -->
+      <!-- Monocular visual odometer -->
+      <node pkg="viso2_ros" type="mono_odometer" name="mono_odometer">
+        <remap from="image" to="camera/image"/>
+        <param name="base_link_frame_id" value="base_link" />
+        <param name="odom_frame_id" value="odom"/>
+        <param name="max_features" value="10" />
+        <param name="motion_threshold" value="350" />
+        <param name="camera_height" value="1.00" />
+        <param name="camera_pitch"  value="0.00" />
+      </node>
+
+      <!-- EKF Localization -->
+      <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization" clear_params="true">
+        <rosparam command="load" file="$(find bluerov)/cfg/ekf.yaml" />
+      </node>
   </group>
 
 
