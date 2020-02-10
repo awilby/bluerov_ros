@@ -35,13 +35,22 @@ git clone https://github.com/fpasteau/raspicam_node.git
 
 ### Install bluerov_ros
 
+todo: add camera drivers as submodule
+
++ ping sonar drivers, gripper arm...
+
 In <your_catkin_workspace>/src, clone this repository:
 
 ```
-git clone https://github.com/awilby/bluerov_ros.git
+git clone --recurse-submodules https://github.com/awilby/bluerov_ros.git
 cd ..
 catkin build 
 ```
+
+### A Note on "Optional" Dependencies
+
+todo: viso2, robot_localization
+
 
 ## Setup
 
