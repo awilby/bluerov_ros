@@ -23,7 +23,7 @@ Make sure to create a catkin workspace by following the instructions in [ROS Env
 
 After installing ROS, also install the following packages (these instructions assume you are using Ubuntu Mate and are installing the packages in the apt repositories; Raspbian users must compile from source): 
 
-`sudo apt-get install ros-kinetic-joy ros-kinetic-robot-state-publisher ros-kinetic-robot-localization`
+`sudo apt-get install ros-kinetic-joy ros-kinetic-robot-state-publisher ros-kinetic-robot-localization ros-kinetic-mavros ros-kinetic-mavros-extras`
 
 You will also need viso2_ros, if you want to perform visual odometry. These will need to be compiled from source. From <your_catkin_workspace>/src:
 
