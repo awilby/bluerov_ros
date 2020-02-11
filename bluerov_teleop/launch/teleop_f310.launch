@@ -1,5 +1,10 @@
 <launch>
 
+  <arg name="machine" default="topside" />
+
+  <!-- Machine Definitions -->
+  <include file="$(find bluerov)/cfg/bluerov.machine" />
+
   <!-- Start the joystick driver -->
   <node respawn="true" pkg="joy" type="joy_node" name="joy_node" output="screen">
     <param name="dev" value="/dev/f310controller" type="string" />
@@ -7,7 +12,8 @@
   </node>
 
   <!-- remap from f310 mappings to xbox mappings -->
-  <node pkg="bluerov_teleop" type="joystick_remapper" name="joystick_remapper" output="screen" required="true">
+  <node pkg="bluerov_teleop" type="joystick_remapper" name="joystick_remapper" output="screen"
+                    required="true" machine="$(arg machine)">
     <param name="user_warning" value="Make sure the Mode light is off on the F310 controller!" type="str" />
     <param name="joy_source" value="joy_f310" type="str" />
     <param name="joy_dest" value="joy" type="str" />
@@ -15,6 +21,7 @@
   </node>
 
   <!-- Teleop node -->
-  <node pkg="bluerov_teleop" type="bluerov_teleop" name="teleop_f310" output="screen" required="true" />
+  <node pkg="bluerov_teleop" type="bluerov_teleop" name="teleop_f310" output="screen"
+                    required="true" machine="$(arg machine)" />
 
 </launch>

@@ -1,10 +1,18 @@
 <launch>
 
+  <arg name="machine" default="topside" />
+
+  <!-- Machine Definitions -->
+  <include file="$(find bluerov)/cfg/bluerov.machine" />
+
   <!-- Start the joystick driver -->
-  <node respawn="true" pkg="joy" type="joy_node" name="joy_node" output="screen">
+  <node respawn="true" pkg="joy" type="joy_node" name="joy_node" output="screen"
+                    machine="$(arg machine)">
     <param name="dev" value="/dev/xboxcontroller" type="string" />
   </node>
 
   <!-- start the teleop app -->
-  <node pkg="bluerov_teleop" type="bluerov_teleop" name="teleop_xbox" output="screen" required="true" />
+  <node pkg="bluerov_teleop" type="bluerov_teleop" name="teleop_xbox" output="screen"
+                        required="true" machine="$(arg machine)" />
+
 </launch>

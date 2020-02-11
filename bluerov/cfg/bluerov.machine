@@ -1,0 +1,10 @@
+<!-- Settings for BlueROV machines (Raspberry Pi and topside) -->
+<launch>
+
+    <!-- Topside computer -->
+    <machine name="topside" address="localhost" env-loader="/opt/ros/melodic/env.sh" />
+
+    <!-- Raspberry Pi -->
+    <machine name="makobot-pi" address="192.168.2.2" user="mako" env-loader="/opt/ros/melodic/env.sh" />
+
+</launch>

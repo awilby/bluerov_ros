@@ -1,20 +1,22 @@
 <!-- Launches processes to start BlueROV: Pixhawk, camera, teleop, etc. -->
 <launch>
 
-  <arg name="enable_teleop" default="true" />
-  <arg name="joystick" default="f310" />
+  <arg name="machine" default="makobot-pi" />
+
+  <!-- Machine Definitions -->
+  <include file="$(find bluerov)/cfg/bluerov.machine" />
 
 
   <!-- Start blueauv control and connect to pixhawk -->
-  <include file="$(find bluerov_robot)/launch/bluerov_mavros.launch" />
+  <include file="$(find bluerov_robot)/launch/bluerov_mavros.launch">
+      <arg name="machine" default="$(arg machine)" />
+  </include>
 
-  <!-- If teleoperation enabled, start teleop node -->
-  <group if="$(arg enable_teleop)">
-      <include file="$(find bluerov_teleop)/launch/teleop_$(arg joystick).launch" />
-  </group>
 
   <!-- Start the raspberry pi camera node -->
-  <include file="$(find bluerov_robot)/launch/camerav2_1280x720.launch" />
+  <include file="$(find bluerov_robot)/launch/camerav2_1280x720.launch">
+      <arg name="machine" default="$(arg machine)" />
+  </include>
 
 
   <!-- Robot State Publisher -->
@@ -23,7 +25,8 @@
    <param name="bluerov" textfile="$(find bluerov_robot)/urdf/bluerov.urdf"/>
 
    <!-- Publish transforms from urdf -->
-   <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" >
+   <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher"
+                        machine="$(arg machine)" >
      <remap from="robot_description" to="bluerov" />
    </node>
 
