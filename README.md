@@ -25,11 +25,10 @@ After installing ROS, also install the following packages (these instructions as
 
 `sudo apt-get install ros-kinetic-joy ros-kinetic-robot-state-publisher ros-kinetic-robot-localization`
 
-You will also need raspicam, for getting images from the front camera, and viso2_ros, if you want to perform visual odometry. These will need to be compiled from source. From <your_catkin_workspace>/src:
+You will also need viso2_ros, if you want to perform visual odometry. These will need to be compiled from source. From <your_catkin_workspace>/src:
 
 ```
 git clone https://github.com/srv/viso2.git
-git clone https://github.com/fpasteau/raspicam_node.git
 ```
 
 
