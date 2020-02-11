@@ -4,6 +4,7 @@
   <arg name="enable_teleop" default="true" />
   <arg name="joystick" default="f310" />
 
+
   <!-- Start blueauv control and connect to pixhawk -->
   <include file="$(find bluerov_robot)/launch/bluerov_mavros.launch" />
 
@@ -13,7 +14,7 @@
   </group>
 
   <!-- Start the raspberry pi camera node -->
-  <include file="$(find bluerov_robot)/launch/front_camera.launch" />
+  <include file="$(find bluerov_robot)/launch/camerav2_1280x720.launch" />
 
 
   <!-- Robot State Publisher -->
