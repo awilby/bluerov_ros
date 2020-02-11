@@ -26,6 +26,7 @@ After installing ROS, also install the following packages (these instructions as
 `sudo apt-get install ros-kinetic-joy ros-kinetic-robot-state-publisher ros-kinetic-robot-localization ros-kinetic-mavros ros-kinetic-mavros-extras`
 
 Install GeographicLib (needed for mavros) by downloading and running the installation script:
+
 `wget https://raw.githubusercontent.com/mavlink/mavros/master/mavros/scripts/install_geographiclib_datasets.sh
 ./install_geographiclib_datasets.sh`
 
