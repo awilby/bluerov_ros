@@ -3,7 +3,7 @@
 
   <!-- Args -->
   <arg name="record_bag" default="false" />
-  <arg name="enable_teleop" default="false" />
+  <arg name="enable_teleop" default="true" />
   <arg name="enable_localization" default="true" />
   <arg name="joystick" default="f310" />        <!-- Values: f310 or xbox -->
 
