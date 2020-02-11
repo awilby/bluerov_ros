@@ -13,7 +13,7 @@
 
   <!-- Start BlueROV2: pixhawk, camera, teleop -->
   <include file="$(find bluerov_robot)/launch/bluerov_start.launch">
-    <arg name="machine" value="makobot-pi" />
+    <arg name="machine" value="bluerov-pi" />
   </include>
 
   <!-- If teleoperation enabled, start teleop node -->

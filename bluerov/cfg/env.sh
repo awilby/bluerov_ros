@@ -11,7 +11,8 @@ fi
 CATKIN_SHELL=sh
 
 # source setup.sh from same directory as this file
-_CATKIN_SETUP_DIR=$(cd "`dirname "$0"`" > /dev/null && pwd)
-. "$_CATKIN_SETUP_DIR/setup.sh"
-export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:~/ros_ws/src
+. "/opt/ros/melodic/setup.sh"
+. "/home/bluerov/ros_ws/devel/setup.bash"
+export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:/home/bluerov/ros_ws/src
+
 exec "$@"

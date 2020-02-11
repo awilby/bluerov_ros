@@ -1,7 +1,7 @@
 <!-- Launches processes to start BlueROV: Pixhawk, camera, teleop, etc. -->
 <launch>
 
-  <arg name="machine" default="makobot-pi" />
+  <arg name="machine" default="bluerov-pi" />
 
   <!-- Machine Definitions -->
   <include file="$(find bluerov)/cfg/bluerov.machine" />
