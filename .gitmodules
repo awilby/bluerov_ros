@@ -4,3 +4,6 @@
 [submodule "ping360_sonar"]
 	path = ping360_sonar
 	url = https://github.com/CentraleNantesRobotics/ping360_sonar.git
+[submodule "ping_echosounder"]
+	path = ping_echosounder
+	url = https://github.com/awilby/ping_echosounder.git
