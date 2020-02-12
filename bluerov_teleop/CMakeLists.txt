@@ -40,19 +40,14 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(bluerov_teleop src/bluerov_teleop.cpp)
-add_dependencies(bluerov_teleop ${${PROJECT_NAME}_EXPORTED_TARGETS})
-add_dependencies(bluerov_teleop ${catkin_EXPORTED_TARGETS})
+add_executable(bluerov_teleop_node node/bluerov_teleop_node.cpp)
+add_library(bluerov_teleop src/bluerov_teleop.cpp)
+add_dependencies(bluerov_teleop_node
+  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+  ${catkin_EXPORTED_TARGETS})
+target_link_libraries(bluerov_teleop_node bluerov_teleop ${catkin_LIBRARIES})
 
 
-
-#add_dependencies(bluerov_teleop ${PROJECT_NAME}_EXPORTED_TARGETS ${PROJECT_NAME}_gencfg)
-
-
-
-#add_dependencies(${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-#add_dependencies(bluerov_teleop ${PROJECT_NAME}_generate_messages_cpp bluerov_teleop_gencfg)
-target_link_libraries(bluerov_teleop ${catkin_LIBRARIES})
 
 #############
 ## Install ##

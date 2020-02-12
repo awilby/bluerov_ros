@@ -1,3 +1,12 @@
+/*
+ * File: bluerov_teleop/include/BluerovTeleop.h
+ * Author: Antonella Wilby <antonella@explorationlabs.com>
+ * Date: Feb. 2020
+ * Description: This software provides remote control (teleoperation) of the BlueROV2.
+ *              This software was modified from the original teleoperation code in
+ *              the original bluerov_apps ROS package.
+ */
+
 #include <ros/ros.h>
 #include <sensor_msgs/Joy.h>
 #include <dynamic_reconfigure/server.h>
@@ -9,9 +18,11 @@
 class BluerovTeleop {
 
     public:
-        BluerovTeleop();
+        BluerovTeleop(ros::NodeHandle* nodehandle);
 
     private:
+        ros::NodeHandle nh_;        // ROS Node Handle
+
         // CONSTANTS: see https://pixhawk.ethz.ch/mavlink/
         enum {COMPONENT_ARM_DISARM=400};
         enum {FORCE_DISARM = 21196};
@@ -22,6 +33,7 @@ class BluerovTeleop {
 
         // Type of joystick
         std::string joystick;
+        std::string joy_topic;
 
         // Keep track of previous buttons pressed
         std::vector<int> previous_buttons;
@@ -32,8 +44,6 @@ class BluerovTeleop {
         bool initLT;
         bool initRT;
 
-        // ROS Node
-        ros::NodeHandle nh_;
 
         // Dynamic reconfigure
         dynamic_reconfigure::Server<bluerov_teleop::bluerov_teleopConfig> server;
@@ -67,6 +77,6 @@ class BluerovTeleop {
         void request_arm(bool arm_input);
 
         // Remaps F310 joystick values since d-pad buttons are treated as axes
-        sensor_msgs::Joy f310_RemapJoystick(const sensor_msgs::Joy::ConstPtr& f310);
+        sensor_msgs::Joy::ConstPtr f310_RemapJoystick(const sensor_msgs::Joy::ConstPtr& f310);
 
 };

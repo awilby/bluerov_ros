@@ -1,11 +1,24 @@
+/*
+ * File: bluerov_teleop/src/bluerov_teleop.cpp
+ * Author: Antonella Wilby <antonella@explorationlabs.com>
+ * Date: Feb. 2020
+ * Description: This software provides remote control (teleoperation) of the BlueROV2.
+ *              This software was modified from the original teleoperation code in
+ *              the original bluerov_apps ROS package.
+ */
+
 #include "BluerovTeleop.h"
+#include <boost/shared_ptr.hpp>
 
 
-BluerovTeleop::BluerovTeleop() {
+BluerovTeleop::BluerovTeleop(ros::NodeHandle* nodehandle):nh_(*nodehandle) {
 
-    // Load parameters
-    ros::NodeHandle nh_param("~");
-    nh_param.param<std::string>("joystick", joystick, "");
+    ROS_INFO("Starting BlueROV teleoperation...");
+
+    // Load private namespace parameters
+    ros::NodeHandle nh("~");    // new nodehandle with private namespace
+    nh.param<std::string>("joystick", joystick, "");
+    nh.param<std::string>("joy_topic", joy_topic, "joy");
 
     // Set up dynamic reconfigure server
     dynamic_reconfigure::Server<bluerov_teleop::bluerov_teleopConfig>::CallbackType f;
@@ -13,10 +26,10 @@ BluerovTeleop::BluerovTeleop() {
     server.setCallback(f);
 
     // Subscribe to incoming joystick commands
-    joy_sub = nh_.subscribe<sensor_msgs::Joy>("joy", 1, &BluerovTeleop::joy_callback, this);
+    joy_sub = nh_.subscribe<sensor_msgs::Joy>(joy_topic, 1, &BluerovTeleop::joy_callback, this);
 
     // Publish thrust commands on mavros rc_override
-    //rc_override_pub = nh_.advertise<mavros_msgs::OverrideRCIn>("/mavros/rc/override", 1); // TODO: bluerov_robot
+    //rc_override_pub = nh_.advertise<mavros_msgs::OverrideRCIn>("/mavros/rc/override", 1);
 
     // Initial state of vehicle
     mode = MODE_STABILIZE;
@@ -24,7 +37,6 @@ BluerovTeleop::BluerovTeleop() {
     initLT = false;
     initRT = false;
 
-    ROS_INFO("Joystick teleoperation ready.");
 }
 
 
@@ -42,12 +54,16 @@ void BluerovTeleop::configCallback(bluerov_teleop::bluerov_teleopConfig &update,
  */
 void BluerovTeleop::joy_callback(const sensor_msgs::Joy::ConstPtr& input) {
 
+    sensor_msgs::Joy::ConstPtr joy;
+
     // If we're using an f310 joystick, remap buttons
     if(joystick == "f310") {
-        sensor_msgs::Joy joy = f310_RemapJoystick(input);
-    }
+        //joy = f310_RemapJoystick(input);
 
-    sensor_msgs::Joy::ConstPtr joy = input;
+    // Otherwise, no remapping is necessary
+    } else {
+        joy = input;
+    }
 
     // Initialize previous buttons
     if (previous_buttons.size() != joy->buttons.size()) {
@@ -213,48 +229,34 @@ void BluerovTeleop::request_arm(bool arm_input) {
  * Remaps incoming joystick commands from F310 (Logitech) joystick because d-pad buttons
  * are treated as axes on F310.
  */
-sensor_msgs::Joy BluerovTeleop::f310_RemapJoystick(const sensor_msgs::Joy::ConstPtr& f310) {
+sensor_msgs::Joy::ConstPtr BluerovTeleop::f310_RemapJoystick(const sensor_msgs::Joy::ConstPtr& f310) {
 
     // remapped sensor message
-    sensor_msgs::Joy remap;
-    remap.header = f310->header;
+    sensor_msgs::Joy *remap = new sensor_msgs::Joy;
+    //sensor_msgs::Joy::ConstPtr remapped_msg_ptr(new sensor_msgs::Joy);
+    //sensor_msgs::Joy::ConstPtr * remapped_msg_ptr = new sensor_msgs::Joy::ConstPtr;// = boost::make_shared<sensor_msgs::Joy>();
+    remap->header = f310->header;
 
     // translate axes
     // f310 axes (from): [left X, left Y, LT, right X, right Y, RT, pad L/R, pad U/D]
     // xbox axes (to):     [left X, left Y, LT, right X, right Y, RT]
-    remap.axes = std::vector<float>(f310->axes);
-    remap.axes.pop_back();
-    remap.axes.pop_back();
+    remap->axes = std::vector<float>(f310->axes);
+    remap->axes.pop_back();
+    remap->axes.pop_back();
 
     // translate buttons
     // f310 buttons (from): [A, B, X, Y LB, RB, BACK, START, POWER, left stick, right stick click]
     // xbox buttons (to):     [A, B, X, Y LB, RB, BACK, START, POWER, left stick, right stick click, pad L, pad R, pad U, pad D]
-    remap.buttons = std::vector<int>(f310->buttons);
-    remap.buttons.push_back((f310->axes[6] > 0.5) ? 1 : 0);
-    remap.buttons.push_back((f310->axes[6] < -0.5) ? 1 : 0);
-    remap.buttons.push_back((f310->axes[7] > 0.5) ? 1 : 0);
-    remap.buttons.push_back((f310->axes[7] < -0.5) ? 1 : 0);
+    remap->buttons = std::vector<int>(f310->buttons);
+    remap->buttons.push_back((f310->axes[6] > 0.5) ? 1 : 0);
+    remap->buttons.push_back((f310->axes[6] < -0.5) ? 1 : 0);
+    remap->buttons.push_back((f310->axes[7] > 0.5) ? 1 : 0);
+    remap->buttons.push_back((f310->axes[7] < -0.5) ? 1 : 0);
 
-    return remap;
+    //*remapped_msg_ptr = boost::shared_ptr<const sensor_msgs::Joy>(remap);
+    //&remapped_msg_ptr = boost::make_shared<sensor_msgs::Joy>(*remap);
+    sensor_msgs::Joy::ConstPtr remapped_msg_ptr(new sensor_msgs::Joy(*remap));
 
-}
-
-
-
-/*
- * Initializes teleop node.
- */
-int main(int argc, char ** argv) {
-
-    // Initialize ROS node, including joystick parameter with current joystick type
-    ros::init(argc, argv, "bluerov_teleop");
-
-    ROS_INFO("Starting joystick control...");
-
-    BluerovTeleop bluerov_teleop;
-
-    ros::spin();
-
-    return 0;
+    return remapped_msg_ptr;
 
 }
