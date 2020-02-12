@@ -1,3 +1,6 @@
 [submodule "raspicam_node"]
 	path = raspicam_node
 	url = https://github.com/UbiquityRobotics/raspicam_node.git
+[submodule "ping360_sonar"]
+	path = ping360_sonar
+	url = https://github.com/CentraleNantesRobotics/ping360_sonar.git

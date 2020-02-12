@@ -30,5 +30,6 @@
   <exec_depend>raspicam_node</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>
   <exec_depend>message_runtime</exec_depend>
+  <exec_depend>ping360_sonar</exec_depend>
 
 </package>
