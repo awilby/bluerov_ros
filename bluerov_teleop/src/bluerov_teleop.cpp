@@ -28,7 +28,7 @@ BluerovTeleop::BluerovTeleop(ros::NodeHandle* nodehandle):nh_(*nodehandle) {
     joy_sub = nh_.subscribe<sensor_msgs::Joy>(joy_topic, 1, &BluerovTeleop::joy_callback, this);
 
     // Publish thrust commands on mavros rc_override
-    //rc_override_pub = nh_.advertise<mavros_msgs::OverrideRCIn>("/mavros/rc/override", 1);
+    rc_override_pub = nh_.advertise<mavros_msgs::OverrideRCIn>("/mavros/rc/override", 1);
 
     // Initial state of vehicle
     mode = MODE_STABILIZE;
