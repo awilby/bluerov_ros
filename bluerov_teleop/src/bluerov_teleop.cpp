@@ -18,6 +18,7 @@ BluerovTeleop::BluerovTeleop(ros::NodeHandle* nodehandle):nh_(*nodehandle) {
     ros::NodeHandle nh("~");    // new nodehandle with private namespace
     nh.param<std::string>("joystick", joystick, "");
     nh.param<std::string>("joy_topic", joy_topic, "joy");
+    nh.param<std::string>("initial_mode", initial_mode, "manual");
 
     // Set up dynamic reconfigure server
     dynamic_reconfigure::Server<bluerov_teleop::bluerov_teleopConfig>::CallbackType f;
@@ -30,14 +31,27 @@ BluerovTeleop::BluerovTeleop(ros::NodeHandle* nodehandle):nh_(*nodehandle) {
     // Publish thrust commands on mavros rc_override
     rc_override_pub = nh_.advertise<mavros_msgs::OverrideRCIn>("/mavros/rc/override", 1);
 
+    // Mavros command services
+    cmd_client = nh_.serviceClient<mavros_msgs::CommandLong>("/mavros/cmd/command");
+    set_mode = = nh_.serviceClient<mavros_msgs::SetMode>("/mavros/set_mode");
 
-    arm_client = nh_.serviceClient<mavros_msgs::CommandLong>("/mavros/cmd/command");
+    // SoundClient for speaking sound responses.
 
     // Initial state of vehicle
-    mode = MODE_MANUAL;
     camera_tilt = CAM_TILT_RESET;
     initLT = false;
     initRT = false;
+
+    // Initial flight mode: manual, stabilized, depth hold mode
+    if (initial_mode == "manual") {
+        mode = MODE_MANUAL;
+    } else if (initial_mode == "stabilized") {
+        mode = MODE_STABILIZE;
+    } else if (initial_mode == "depth") {
+        mode = MODE_DEPTH_HOLD;
+    } else {
+        mode = MODE_MANUAL;
+    }
 
 }
 
@@ -65,6 +79,10 @@ void BluerovTeleop::configCallback(bluerov_teleop::bluerov_teleopConfig &update,
  */
 void BluerovTeleop::joy_callback(const sensor_msgs::Joy::ConstPtr& input) {
 
+    // RC OVERRIDE MESSAGE
+    mavros_msgs::OverrideRCIn msg;
+
+    // Joystick input
     sensor_msgs::Joy::ConstPtr joy = input;
 
     // If we're using an f310 joystick, remap buttons
@@ -80,26 +98,28 @@ void BluerovTeleop::joy_callback(const sensor_msgs::Joy::ConstPtr& input) {
 
     // ARMING
     if (risingEdge(joy, config.disarm_button)) {     // bluerov_teleop
-       request_arm(false);
+       requestArm(false);
 
    } else if(risingEdge(joy, config.arm_button)) {  // bluerov_teleop
-        request_arm(true);
+        requestArm(true);
 
     }
 
     // MODE SWITCHING: Manual, stabilize, depth hold
-    if (risingEdge(joy, config.stabilize_button)) {
+    if (risingEdge(joy, config.manual_button)) {
+        mode = MODE_MANUAL;
+        setMode(mode);
+        ROS_INFO("Entered manual flight mode.");
+
+    } else if (risingEdge(joy, config.stabilize_button)) {
         mode = MODE_STABILIZE;
+        setMode(mode);
         ROS_INFO("Entered stabilized flight mode.");
 
     } else if (risingEdge(joy, config.depth_hold_button)) {
         mode = MODE_DEPTH_HOLD;
+        setMode(mode);
         ROS_INFO("Entered depth hold mode.");
-
-    } else if (risingEdge(joy, config.manual_button)) {
-        mode = MODE_MANUAL;
-        ROS_INFO("Entered manual flight mode.");
-
     }
 
     // CAMERA TILT: reset to origin
@@ -127,28 +147,44 @@ void BluerovTeleop::joy_callback(const sensor_msgs::Joy::ConstPtr& input) {
 
     }
 
+    // LIGHTS:
+
+
+
+    // Auto descend/ascend
+    if (risingEdge(joy, config.autoascend_button)) {
+        autoDescendAscend(false);
+    } else if (risingEdge(joy, config.autodescend_button)) {
+        autoDescendAscend(true);
+    }
+
+
+
+
 
     // Remember current button states for future comparison
     previous_buttons = std::vector<int>(joy->buttons);
 
 
-    // RC OVERRIDE MESSAGE
-    mavros_msgs::OverrideRCIn msg;      // TODO: bluerov_robot
-
-    // THRUSTER CONTROL: forward, strafe, throttle
+    // THRUSTER CONTROL: forward, strafe, throttle, roll, pitch, yaw
+    // Channel mappings still like this? https://www.ardusub.com/operators-manual/rc-input-and-output.html
     /*msg.channels[5] = mapToPpm(config.x_scaling  * computeAxisValue(joy, config.x_axis,  config.expo)); // forward  (x)
     msg.channels[6] = mapToPpm(config.y_scaling  * computeAxisValue(joy, config.y_axis,  config.expo)); // strafe   (y)
     msg.channels[2] = mapToPpm(config.z_scaling  * computeAxisValue(joy, config.z_axis,  config.expo)); // throttle (z)
+    msg.channels[1] = mapToPpm(config.wx_scaling * computeAxisValue(joy, config.wx_axis, config.expo)); // roll     (wx)
+    msg.channels[0] = mapToPpm(config.wy_scaling * computeAxisValue(joy, config.wy_axis, config.expo)); // pitch    (wy)
+    msg.channels[3] = mapToPpm(config.wz_scaling * computeAxisValue(joy, config.wz_axis, config.expo)); // yaw      (wz)*/
 
-    // THRUSTER CONTROL: roll, pitch, yaw
+    msg.channels[4] = mapToPpm(config.x_scaling  * computeAxisValue(joy, config.x_axis,  config.expo)); // forward  (x)
+    msg.channels[5] = mapToPpm(config.y_scaling  * computeAxisValue(joy, config.y_axis,  config.expo)); // strafe   (y)
+    msg.channels[2] = mapToPpm(config.z_scaling  * computeAxisValue(joy, config.z_axis,  config.expo)); // throttle (z)
     msg.channels[1] = mapToPpm(config.wx_scaling * computeAxisValue(joy, config.wx_axis, config.expo)); // roll     (wx)
     msg.channels[0] = mapToPpm(config.wy_scaling * computeAxisValue(joy, config.wy_axis, config.expo)); // pitch    (wy)
     msg.channels[3] = mapToPpm(config.wz_scaling * computeAxisValue(joy, config.wz_axis, config.expo)); // yaw      (wz)
 
-    */
-
     // MODE AND CAMERA CONTROL
-    msg.channels[4] = mode; // mode
+    // channel 6 unused, we don't have camera pan 
+    //msg.channels[4] = mode; // mode       // why is this channel 4?? why not command set?
     msg.channels[7] = camera_tilt; // camera tilt
 
     rc_override_pub.publish(msg);
@@ -193,7 +229,6 @@ double BluerovTeleop::computeAxisValue(const sensor_msgs::Joy::ConstPtr& joy, in
 
     } else {
         value = joy->axes[index];
-
     }
 
     // apply exponential scaling
@@ -235,9 +270,9 @@ bool BluerovTeleop::risingEdge(const sensor_msgs::Joy::ConstPtr& joy, int index)
 
 
 /*
- * Sends a request to bluerov_robot arming service to arm the robot.
+ * Sends a request to mavros CommandLong service to arm the robot.
  */
-void BluerovTeleop::request_arm(bool arm_input) {
+void BluerovTeleop::requestArm(bool arm_input) {
 
     mavros_msgs::CommandLong srv;
     srv.request.command = COMPONENT_ARM_DISARM;
@@ -249,10 +284,54 @@ void BluerovTeleop::request_arm(bool arm_input) {
     //srv.request.arm = arm_input;
 
     // Call bluerov_robot arming service (pixhawk_bridge handles logging info)
-    if (arm_client.call(srv)) {
+    if (cmd_client.call(srv)) {
         ROS_INFO (arm_input ? "Armed" : "Disarmed");
+
+        if (arm_input == true) {        // TODO: NEED NEW THREAD
+            sc.say("Armed");
+        } else {
+            sc.say("Disarmed");
+        }
+
     } else {
         ROS_ERROR(arm_input ? "FAILED TO ARM.": "WARNING! FAILED TO DISARM! ");
+    }
+
+}
+
+void BluerovTeleop::setMode(std::string new_mode) {
+
+    mavros_msgs::SetMode srv;
+    srv.request.base_mode = 0;
+    srv.request.custom_mode = new_mode;
+
+    // Send request to service
+    if (set_mode.call(srv)) {
+        ROS_INFO("%s Flight Mode", new_mode.c_str());
+    } else {
+        ROS_ERROR("Failed to set flight mode!");
+    }
+
+}
+
+void TeleopJoy::autoDescendAscend(bool autodepth) {
+
+    mavros_msgs::CommandLong srv;
+    srv.request.command = (autodepth ? NAV_TAKEOFF_LOCAL : NAV_LAND_LOCAL);
+    srv.request.param1 = 0;
+    srv.request.param2 = 0;
+    srv.request.param3 = config.scend_rate;
+    srv.request.param4 = 0;
+    srv.request.param5 = 0;
+    srv.request.param6 = 0;
+    srv.request.param7 = (autodepth ? config.auto_depth : 0);
+
+
+    if(cmd_client.call(srv)) {
+        ROS_INFO(autodepth ? "Auto-Descending" : "Auto-Ascending");
+    }
+    else {
+        ROS_ERROR("Failed to request auto ascend/descend.");
     }
 
 }

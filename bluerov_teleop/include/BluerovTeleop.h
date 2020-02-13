@@ -14,8 +14,10 @@
 #include <bluerov_teleop/bluerov_teleopConfig.h>
 #include <mavros_msgs/CommandLong.h>
 #include <mavros_msgs/OverrideRCIn.h>
+#include <sound_play/sound_play.h>
 #include <vector>
 #include <math.h>
+#include <boost/thread/thread.hpp>
 
 
 class BluerovTeleop {
@@ -27,26 +29,37 @@ class BluerovTeleop {
     private:
         ros::NodeHandle nh_;        // ROS Node Handle
 
-        // CONSTANTS: see https://pixhawk.ethz.ch/mavlink/
-        enum {COMPONENT_ARM_DISARM=400};
+        // CONSTANTS: see https://mavlink.io/en/messages/common.html
+        enum {COMPONENT_ARM_DISARM = 400};
         enum {FORCE_DISARM = 21196};
-        enum {MODE_STABILIZE = 1000, MODE_DEPTH_HOLD = 2000, MODE_MANUAL=1000};  // ppm in uS
+        //enum {DO_SET_MODE = 176, MODE_STABILIZE = 1000, MODE_DEPTH_HOLD = 2000, MODE_MANUAL=1000};  // ppm in uS
+        //enum {DO_SET_MODE = 176, MODE_MANUAL = 0, MODE_STABILIZE = 1, MODE_DEPTH_HOLD = 2};
+        enum {NAV_LAND_LOCAL = 23, NAV_TAKEOFF_LOCAL = 24};
         enum {PPS_MIN = 1000, PPS_MAX = 2000};  // ppm in uS
         enum {CAM_TILT_RESET = 1500};  // ppm in uS
+
+        // See supported mavros custom modes: http://wiki.ros.org/mavros/CustomModes
+        const std::string MODE_MANUAL = "MANUAL";
+        const std::string MODE_STABILIZE = "STABILIZE";
+        const std::string MODE_DEPTH_HOLD = "ALT_HOLD";
 
 
         // Type of joystick
         std::string joystick;
         std::string joy_topic;
+        std::string initial_mode;
 
         // Keep track of previous buttons pressed
         std::vector<int> previous_buttons;
 
         // Variables to keep track of current state
-        uint16_t mode;
+        std::string mode;
         uint16_t camera_tilt;
         bool initLT;
         bool initRT;
+
+        // SoundPlay client for speaking responses for commands
+        sound_play::SoundClient sc;
 
 
         // Dynamic reconfigure
@@ -59,8 +72,10 @@ class BluerovTeleop {
         // Publisher for thruster msgs
         ros::Publisher rc_override_pub;
 
-        // Service for arming robot
-        ros::ServiceClient arm_client; // = nh_.serviceClient<bluerov_robot::Arm>("bluerov_arm");
+        // Services for mavros commands
+        ros::ServiceClient cmd_client; // = nh_.serviceClient<bluerov_robot::Arm>("bluerov_arm");
+        ros::ServiceClient set_mode;
+
 
         // Dynamic reconfigure server callback function
         void configCallback(bluerov_teleop::bluerov_teleopConfig &update, uint32_t level);
@@ -77,8 +92,14 @@ class BluerovTeleop {
         // Maps axis values to PPM (Pulse Position Modulation) commands
         uint16_t mapToPpm(double in);
 
-        // Set arming request to FCU via bluerov_robot
-        void request_arm(bool arm_input);
+        // Set arming request to FCU
+        void requestArm(bool arm_input);
+
+        // Set mode
+        void setMode(std::string mode);
+
+        // Auto descend/ascend to depth
+        void cmdTakeoffLand(bool autodepth);
 
         // Remaps F310 joystick values since d-pad buttons are treated as axes
         sensor_msgs::Joy::ConstPtr f310_RemapJoystick(const sensor_msgs::Joy::ConstPtr& f310);

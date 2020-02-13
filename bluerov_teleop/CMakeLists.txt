@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   joy
   dynamic_reconfigure
   mavros_msgs
+  sound_play
   message_generation
   bluerov_robot
 )

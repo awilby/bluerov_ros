@@ -16,6 +16,7 @@
   <depend>dynamic_reconfigure</depend>
   <depend>mavros_msgs</depend>
   <depend>bluerov_robot</depend>
+  <depend>sound_play</depend>
   <exec_depend>message_runtime</exec_depend>
 
 </package>
