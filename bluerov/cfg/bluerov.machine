@@ -5,6 +5,6 @@
     <machine name="topside" address="localhost" env-loader="/opt/ros/melodic/env.sh" />
 
     <!-- Raspberry Pi -->
-    <machine name="bluerov-pi" address="192.168.2.2" user="bluerov" env-loader="/home/bluerov/ros_ws/devel/env.sh" />
+    <machine name="bluerov-pi" address="192.168.2.2" user="bluerov" env-loader="/home/bluerov/ros_ws/src/bluerov_ros/bluerov_robot/cfg/env.sh" />
 
 </launch>

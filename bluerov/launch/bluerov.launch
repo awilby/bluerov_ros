@@ -4,8 +4,8 @@
   <!-- Args -->
   <arg name="record_bag" default="false" />
   <arg name="enable_teleop" default="true" />
-  <arg name="enable_localization" default="true" />
-  <arg name="joystick" default="f310" />        <!-- Values: f310 or xbox -->
+  <arg name="enable_localization" default="false" />
+  <arg name="joystick" default="xbox" />        <!-- Values: f310 or xbox -->
 
   <!-- Machine Definitions -->
   <include file="$(find bluerov)/cfg/bluerov.machine" />
@@ -23,8 +23,14 @@
       </include>
   </group>
 
+  <!--<group if="$(arg enable_teleop)">
+      <include file="$(find bluerov_teleop)/launch/test_teleop.launch">
+          <arg name="machine" value="topside" />
+      </include>
+  </group>-->
+
   <!-- Launch UI -->
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find bluerov)/cfg/bluerov.rviz" machine="topside" />
+  <!--<node name="rviz" pkg="rviz" type="rviz" args="-d $(find bluerov)/cfg/bluerov.rviz" machine="topside" />-->
 
 
   <!-- Visual odometry and EKF localization -->

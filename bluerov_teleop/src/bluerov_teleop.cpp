@@ -30,14 +30,26 @@ BluerovTeleop::BluerovTeleop(ros::NodeHandle* nodehandle):nh_(*nodehandle) {
     // Publish thrust commands on mavros rc_override
     rc_override_pub = nh_.advertise<mavros_msgs::OverrideRCIn>("/mavros/rc/override", 1);
 
+
+    arm_client = nh_.serviceClient<mavros_msgs::CommandLong>("/mavros/cmd/command");
+
     // Initial state of vehicle
-    mode = MODE_STABILIZE;
+    mode = MODE_MANUAL;
     camera_tilt = CAM_TILT_RESET;
     initLT = false;
     initRT = false;
 
 }
 
+
+void BluerovTeleop::spin() {
+    ros::Rate loop(config.pub_rate);
+
+    while(ros::ok()) {
+        ros::spinOnce();
+        loop.sleep();
+    }
+}
 
 /*
  * Callback function for dynamic reconfigure server.
@@ -67,10 +79,10 @@ void BluerovTeleop::joy_callback(const sensor_msgs::Joy::ConstPtr& input) {
     }
 
     // ARMING
-    if (risingEdge(joy, config.disarm_button)) {     // Disarm
+    if (risingEdge(joy, config.disarm_button)) {     // bluerov_teleop
        request_arm(false);
 
-    } else if(risingEdge(joy, config.arm_button)) {  // Arm
+   } else if(risingEdge(joy, config.arm_button)) {  // bluerov_teleop
         request_arm(true);
 
     }
@@ -90,16 +102,29 @@ void BluerovTeleop::joy_callback(const sensor_msgs::Joy::ConstPtr& input) {
 
     }
 
-    // CAMERA TILT
+    // CAMERA TILT: reset to origin
     if (risingEdge(joy, config.cam_tilt_reset)) {
-         camera_tilt = CAM_TILT_RESET;
+        camera_tilt = CAM_TILT_RESET;
+        ROS_INFO("Resetting camera position.");
 
+    // CAMERA TILT: up
     } else if (risingEdge(joy, config.cam_tilt_up)) {
+        ROS_INFO("Tilting camera up.");
         camera_tilt = camera_tilt + config.cam_tilt_step;
 
         if (camera_tilt > PPS_MAX) {
             camera_tilt = PPS_MAX;
         }
+
+    // CAMERA TILT: down
+    } else if (risingEdge(joy, config.cam_tilt_down)) {
+        ROS_INFO("tilting camera down.");
+        camera_tilt = camera_tilt - config.cam_tilt_step;
+
+        if (camera_tilt < PPS_MIN) {
+            camera_tilt = PPS_MIN;
+        }
+
     }
 
 
@@ -214,11 +239,21 @@ bool BluerovTeleop::risingEdge(const sensor_msgs::Joy::ConstPtr& joy, int index)
  */
 void BluerovTeleop::request_arm(bool arm_input) {
 
-    bluerov_robot::Arm srv;
-    srv.request.arm = arm_input;
+    mavros_msgs::CommandLong srv;
+    srv.request.command = COMPONENT_ARM_DISARM;
+    srv.request.param1 = (arm_input ? 1 : 0);
+    srv.request.param2 = 21196; // force disarm (see GCS_Mavlink.cpp)
+
+
+    //bluerov_robot::Arm srv;
+    //srv.request.arm = arm_input;
 
     // Call bluerov_robot arming service (pixhawk_bridge handles logging info)
-    arm_client.call(srv);
+    if (arm_client.call(srv)) {
+        ROS_INFO (arm_input ? "Armed" : "Disarmed");
+    } else {
+        ROS_ERROR(arm_input ? "FAILED TO ARM.": "WARNING! FAILED TO DISARM! ");
+    }
 
 }
 

@@ -20,7 +20,8 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## Generate dynamic reconfigure parameters in the 'cfg' folder
 generate_dynamic_reconfigure_options(
-  cfg/xbox_joy.cfg
+  cfg/bluerov_teleop.cfg
+  cfg/teleop_joy.cfg
 )
 
 ###################################
@@ -46,6 +47,14 @@ add_dependencies(bluerov_teleop_node
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS})
 target_link_libraries(bluerov_teleop_node bluerov_teleop ${catkin_LIBRARIES})
+
+add_executable(joystick_remapper src/joystick_remapper.cpp)
+add_dependencies(joystick_remapper ${catkin_EXPORTED_TARGETS})
+target_link_libraries(joystick_remapper ${catkin_LIBRARIES})
+
+add_executable(teleop_joy src/teleop_joy.cpp)
+add_dependencies(teleop_joy ${catkin_EXPORTED_TARGETS} ${${PROJECT_NAME}_EXPORTED_TARGETS})
+target_link_libraries(teleop_joy ${catkin_LIBRARIES})
 
 
 

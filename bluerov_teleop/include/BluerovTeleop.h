@@ -14,13 +14,15 @@
 #include <bluerov_teleop/bluerov_teleopConfig.h>
 #include <mavros_msgs/CommandLong.h>
 #include <mavros_msgs/OverrideRCIn.h>
-
+#include <vector>
+#include <math.h>
 
 
 class BluerovTeleop {
 
     public:
         BluerovTeleop(ros::NodeHandle* nodehandle);
+        void spin();
 
     private:
         ros::NodeHandle nh_;        // ROS Node Handle
@@ -58,7 +60,7 @@ class BluerovTeleop {
         ros::Publisher rc_override_pub;
 
         // Service for arming robot
-        ros::ServiceClient arm_client = nh_.serviceClient<bluerov_robot::Arm>("bluerov_arm");
+        ros::ServiceClient arm_client; // = nh_.serviceClient<bluerov_robot::Arm>("bluerov_arm");
 
         // Dynamic reconfigure server callback function
         void configCallback(bluerov_teleop::bluerov_teleopConfig &update, uint32_t level);

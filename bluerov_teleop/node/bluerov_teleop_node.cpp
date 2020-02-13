@@ -21,10 +21,12 @@ int main(int argc, char ** argv) {
     ros::NodeHandle nh_;
 
     BluerovTeleop bluerov_teleop(&nh_);
+    bluerov_teleop.spin();
+
 
     ROS_INFO("BlueROV teleoperation ready.");
 
-    ros::spin();
+    //ros::spin();
 
     return 0;
 
