@@ -8,7 +8,6 @@
  */
 
 #include "BluerovTeleop.h"
-#include <boost/shared_ptr.hpp>
 
 
 BluerovTeleop::BluerovTeleop(ros::NodeHandle* nodehandle):nh_(*nodehandle) {
@@ -54,15 +53,12 @@ void BluerovTeleop::configCallback(bluerov_teleop::bluerov_teleopConfig &update,
  */
 void BluerovTeleop::joy_callback(const sensor_msgs::Joy::ConstPtr& input) {
 
-    sensor_msgs::Joy::ConstPtr joy;
+    sensor_msgs::Joy::ConstPtr joy = input;
 
     // If we're using an f310 joystick, remap buttons
     if(joystick == "f310") {
-        //joy = f310_RemapJoystick(input);
+        joy = f310_RemapJoystick(input);
 
-    // Otherwise, no remapping is necessary
-    } else {
-        joy = input;
     }
 
     // Initialize previous buttons
@@ -233,8 +229,6 @@ sensor_msgs::Joy::ConstPtr BluerovTeleop::f310_RemapJoystick(const sensor_msgs::
 
     // remapped sensor message
     sensor_msgs::Joy *remap = new sensor_msgs::Joy;
-    //sensor_msgs::Joy::ConstPtr remapped_msg_ptr(new sensor_msgs::Joy);
-    //sensor_msgs::Joy::ConstPtr * remapped_msg_ptr = new sensor_msgs::Joy::ConstPtr;// = boost::make_shared<sensor_msgs::Joy>();
     remap->header = f310->header;
 
     // translate axes
@@ -253,8 +247,6 @@ sensor_msgs::Joy::ConstPtr BluerovTeleop::f310_RemapJoystick(const sensor_msgs::
     remap->buttons.push_back((f310->axes[7] > 0.5) ? 1 : 0);
     remap->buttons.push_back((f310->axes[7] < -0.5) ? 1 : 0);
 
-    //*remapped_msg_ptr = boost::shared_ptr<const sensor_msgs::Joy>(remap);
-    //&remapped_msg_ptr = boost::make_shared<sensor_msgs::Joy>(*remap);
     sensor_msgs::Joy::ConstPtr remapped_msg_ptr(new sensor_msgs::Joy(*remap));
 
     return remapped_msg_ptr;
