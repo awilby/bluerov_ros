@@ -12,6 +12,8 @@
 #include <dynamic_reconfigure/server.h>
 #include <bluerov_robot/Arm.h>
 #include <bluerov_teleop/bluerov_teleopConfig.h>
+#include <mavros_msgs/CommandLong.h>
+#include <mavros_msgs/OverrideRCIn.h>
 
 
 

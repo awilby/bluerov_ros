@@ -108,10 +108,10 @@ void BluerovTeleop::joy_callback(const sensor_msgs::Joy::ConstPtr& input) {
 
 
     // RC OVERRIDE MESSAGE
-   /* mavros_msgs::OverrideRCIn msg;      // TODO: bluerov_robot
+    mavros_msgs::OverrideRCIn msg;      // TODO: bluerov_robot
 
     // THRUSTER CONTROL: forward, strafe, throttle
-    msg.channels[5] = mapToPpm(config.x_scaling  * computeAxisValue(joy, config.x_axis,  config.expo)); // forward  (x)
+    /*msg.channels[5] = mapToPpm(config.x_scaling  * computeAxisValue(joy, config.x_axis,  config.expo)); // forward  (x)
     msg.channels[6] = mapToPpm(config.y_scaling  * computeAxisValue(joy, config.y_axis,  config.expo)); // strafe   (y)
     msg.channels[2] = mapToPpm(config.z_scaling  * computeAxisValue(joy, config.z_axis,  config.expo)); // throttle (z)
 
@@ -120,11 +120,13 @@ void BluerovTeleop::joy_callback(const sensor_msgs::Joy::ConstPtr& input) {
     msg.channels[0] = mapToPpm(config.wy_scaling * computeAxisValue(joy, config.wy_axis, config.expo)); // pitch    (wy)
     msg.channels[3] = mapToPpm(config.wz_scaling * computeAxisValue(joy, config.wz_axis, config.expo)); // yaw      (wz)
 
+    */
+
     // MODE AND CAMERA CONTROL
     msg.channels[4] = mode; // mode
     msg.channels[7] = camera_tilt; // camera tilt
 
-    rc_override_pub.publish(msg);*/
+    rc_override_pub.publish(msg);
 
 }
 
