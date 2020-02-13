@@ -7,7 +7,7 @@
   <include file="$(find bluerov)/cfg/bluerov.machine" />
 
   <!-- Start the joystick driver -->
-  <node respawn="true" pkg="joy" type="joy_node" name="joy_node" output="screen">
+  <node respawn="true" pkg="joy" type="joy_node" name="joy_node" output="screen" machine="$(arg machine)">
     <param name="dev" value="/dev/f310controller" type="string" />
     <remap from="joy" to="joy_f310" />
   </node>
