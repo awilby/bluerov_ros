@@ -18,6 +18,7 @@
 #include <sound_play/sound_play.h>
 #include <vector>
 #include <math.h>
+#include<string>
 #include <boost/thread/thread.hpp>
 
 
@@ -33,11 +34,15 @@ class BluerovTeleop {
         // CONSTANTS: see https://mavlink.io/en/messages/common.html
         enum {COMPONENT_ARM_DISARM = 400};
         enum {FORCE_DISARM = 21196};
+        enum {DO_SET_SERVO = 183};
         //enum {DO_SET_MODE = 176, MODE_STABILIZE = 1000, MODE_DEPTH_HOLD = 2000, MODE_MANUAL=1000};  // ppm in uS
         //enum {DO_SET_MODE = 176, MODE_MANUAL = 0, MODE_STABILIZE = 1, MODE_DEPTH_HOLD = 2};
         enum {NAV_LAND_LOCAL = 23, NAV_TAKEOFF_LOCAL = 24};
         enum {PPS_MIN = 1000, PPS_MAX = 2000};  // ppm in uS
         enum {CAM_TILT_RESET = 1500};  // ppm in uS
+
+        enum {LIGHTS_AUX_CHAN = 0};
+        enum {CAM_AUX_CHAN = 1};
 
         // See supported mavros custom modes: http://wiki.ros.org/mavros/CustomModes
         const std::string MODE_MANUAL = "MANUAL";
@@ -58,6 +63,8 @@ class BluerovTeleop {
         uint16_t camera_tilt;
         bool initLT;
         bool initRT;
+
+        int lights_level;  // Light level can be integer from 0 through 4
 
         // SoundPlay client for speaking responses for commands
         sound_play::SoundClient sc;
@@ -85,7 +92,7 @@ class BluerovTeleop {
         void joy_callback(const sensor_msgs::Joy::ConstPtr& joy);
 
         // Get joystick button presses
-        bool risingEdge(const sensor_msgs::Joy::ConstPtr& joy, int index);
+        bool buttonPress(const sensor_msgs::Joy::ConstPtr& joy, int index);
 
         // Computes the position of joystick for publishing thrust control
         double computeAxisValue(const sensor_msgs::Joy::ConstPtr& joy, int index, double expo);
@@ -98,6 +105,9 @@ class BluerovTeleop {
 
         // Set mode
         void setMode(std::string mode);
+
+        // Lights
+        void lightsOnOff(bool light_input);
 
         // Auto descend/ascend to depth
         void autoDescendAscend(bool autodepth);

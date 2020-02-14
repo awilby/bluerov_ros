@@ -41,6 +41,7 @@ BluerovTeleop::BluerovTeleop(ros::NodeHandle* nodehandle):nh_(*nodehandle) {
     camera_tilt = CAM_TILT_RESET;
     initLT = false;
     initRT = false;
+    lights_level = 0;
 
     // Initial flight mode: manual, stabilized, depth hold mode
     if (initial_mode == "manual") {
@@ -100,61 +101,71 @@ void BluerovTeleop::joy_callback(const sensor_msgs::Joy::ConstPtr& input) {
     }
 
     // ARMING
-    if (risingEdge(joy, config.disarm_button)) {     // bluerov_teleop
+    if (buttonPress(joy, config.disarm_button)) {     // bluerov_teleop
        requestArm(false);
 
-   } else if(risingEdge(joy, config.arm_button)) {  // bluerov_teleop
+   } else if(buttonPress(joy, config.arm_button)) {  // bluerov_teleop
         requestArm(true);
 
     }
 
     // MODE SWITCHING: Manual, stabilize, depth hold
-    if (risingEdge(joy, config.manual_button)) {
+    if (buttonPress(joy, config.manual_button)) {
         mode = MODE_MANUAL;
         setMode(mode);
 
-    } else if (risingEdge(joy, config.stabilize_button)) {
+    } else if (buttonPress(joy, config.stabilize_button)) {
         mode = MODE_STABILIZE;
         setMode(mode);
 
-    } else if (risingEdge(joy, config.depth_hold_button)) {
+    } else if (buttonPress(joy, config.depth_hold_button)) {
         mode = MODE_DEPTH_HOLD;
         setMode(mode);
     }
 
+
+    // LIGHTS: on/off
+    if (buttonPress(joy, config.lights_increase)) {
+        lightsOnOff(true);      // true = light brightness increase
+
+    } else if (buttonPress(joy, config.lights_decrease)) {
+        lightsOnOff(false);     // false = light brightness decrease
+    }
+
+
     // CAMERA TILT: reset to origin
-    if (risingEdge(joy, config.cam_tilt_reset)) {
+    /*if (buttonPress(joy, config.cam_tilt_reset)) {
         camera_tilt = CAM_TILT_RESET;
         ROS_INFO("Resetting camera position.");
 
     // CAMERA TILT: up
-    } else if (risingEdge(joy, config.cam_tilt_up)) {
-        ROS_INFO("Tilting camera up.");
-        camera_tilt = camera_tilt + config.cam_tilt_step;
+    } else if (buttonPress(joy, config.cam_tilt_up)) {
+        //ROS_INFO("Tilting camera up.");
+        //camera_tilt = camera_tilt + config.cam_tilt_step;
 
         if (camera_tilt > PPS_MAX) {
             camera_tilt = PPS_MAX;
         }
 
     // CAMERA TILT: down
-    } else if (risingEdge(joy, config.cam_tilt_down)) {
-        ROS_INFO("tilting camera down.");
-        camera_tilt = camera_tilt - config.cam_tilt_step;
+    } else if (buttonPress(joy, config.cam_tilt_down)) {
+        //ROS_INFO("tilting camera down.");
+        //camera_tilt = camera_tilt - config.cam_tilt_step;
 
         if (camera_tilt < PPS_MIN) {
             camera_tilt = PPS_MIN;
         }
 
-    }
+    }*/
 
-    // LIGHTS:
+
 
 
 
     // Auto descend/ascend
-    if (risingEdge(joy, config.autoascend_button)) {
+    if (buttonPress(joy, config.autoascend_button)) {
         autoDescendAscend(false);
-    } else if (risingEdge(joy, config.autodescend_button)) {
+    } else if (buttonPress(joy, config.autodescend_button)) {
         autoDescendAscend(true);
     }
 
@@ -185,7 +196,7 @@ void BluerovTeleop::joy_callback(const sensor_msgs::Joy::ConstPtr& input) {
     // MODE AND CAMERA CONTROL
     // channel 6 unused, we don't have camera pan
     //msg.channels[4] = mode; // mode       // why is this channel 4?? why not command set?
-    msg.channels[7] = camera_tilt; // camera tilt
+    //msg.channels[7] = camera_tilt; // camera tilt
 
     rc_override_pub.publish(msg);
 
@@ -264,7 +275,7 @@ uint16_t BluerovTeleop::mapToPpm(double in) {
 /*
  * Checks for button press.
  */
-bool BluerovTeleop::risingEdge(const sensor_msgs::Joy::ConstPtr& joy, int index) {
+bool BluerovTeleop::buttonPress(const sensor_msgs::Joy::ConstPtr& joy, int index) {
     return (joy->buttons[index] == 1 && previous_buttons[index] == 0);
 }
 
@@ -288,9 +299,9 @@ void BluerovTeleop::requestArm(bool arm_input) {
         ROS_INFO (arm_input ? "Armed" : "Disarmed");
 
         if (arm_input == true) {        // TODO: NEED NEW THREAD
-            sc.say("Armed");
+            //sc.say("Armed");
         } else {
-            sc.say("Disarmed");
+            //sc.say("Disarmed");
         }
 
     } else {
@@ -310,6 +321,38 @@ void BluerovTeleop::setMode(std::string new_mode) {
         ROS_INFO("Entered %s Flight Mode.", new_mode.c_str());
     } else {
         ROS_ERROR("Failed to set flight mode!");
+    }
+
+}
+
+
+void BluerovTeleop::lightsOnOff(bool light_increase) {
+
+    if (light_increase) {
+        lights_level++;
+
+        if (lights_level >= 4) {
+            lights_level = 4;
+        }
+    } else {
+        lights_level--;
+        if (lights_level <= 0) {
+            lights_level = 0;
+        }
+    }
+
+
+    mavros_msgs::CommandLong srv;
+    srv.request.command = DO_SET_SERVO;
+    srv.request.param1 = LIGHTS_AUX_CHAN;
+    srv.request.param2 = 1000;
+
+    if(cmd_client.call(srv)) {
+
+        ROS_INFO("Light Brightness: %s%%", std::to_string(lights_level*25).c_str());
+
+    } else {
+        ROS_ERROR("Couldn't change lights.");
     }
 
 }
