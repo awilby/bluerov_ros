@@ -33,7 +33,7 @@ BluerovTeleop::BluerovTeleop(ros::NodeHandle* nodehandle):nh_(*nodehandle) {
 
     // Mavros command services
     cmd_client = nh_.serviceClient<mavros_msgs::CommandLong>("/mavros/cmd/command");
-    set_mode = = nh_.serviceClient<mavros_msgs::SetMode>("/mavros/set_mode");
+    set_mode = nh_.serviceClient<mavros_msgs::SetMode>("/mavros/set_mode");
 
     // SoundClient for speaking sound responses.
 
@@ -52,6 +52,9 @@ BluerovTeleop::BluerovTeleop(ros::NodeHandle* nodehandle):nh_(*nodehandle) {
     } else {
         mode = MODE_MANUAL;
     }
+
+
+    ROS_INFO("BlueROV teleoperation ready: %s mode.", mode.c_str());
 
 }
 
@@ -109,17 +112,14 @@ void BluerovTeleop::joy_callback(const sensor_msgs::Joy::ConstPtr& input) {
     if (risingEdge(joy, config.manual_button)) {
         mode = MODE_MANUAL;
         setMode(mode);
-        ROS_INFO("Entered manual flight mode.");
 
     } else if (risingEdge(joy, config.stabilize_button)) {
         mode = MODE_STABILIZE;
         setMode(mode);
-        ROS_INFO("Entered stabilized flight mode.");
 
     } else if (risingEdge(joy, config.depth_hold_button)) {
         mode = MODE_DEPTH_HOLD;
         setMode(mode);
-        ROS_INFO("Entered depth hold mode.");
     }
 
     // CAMERA TILT: reset to origin
@@ -183,7 +183,7 @@ void BluerovTeleop::joy_callback(const sensor_msgs::Joy::ConstPtr& input) {
     msg.channels[3] = mapToPpm(config.wz_scaling * computeAxisValue(joy, config.wz_axis, config.expo)); // yaw      (wz)
 
     // MODE AND CAMERA CONTROL
-    // channel 6 unused, we don't have camera pan 
+    // channel 6 unused, we don't have camera pan
     //msg.channels[4] = mode; // mode       // why is this channel 4?? why not command set?
     msg.channels[7] = camera_tilt; // camera tilt
 
@@ -307,14 +307,14 @@ void BluerovTeleop::setMode(std::string new_mode) {
 
     // Send request to service
     if (set_mode.call(srv)) {
-        ROS_INFO("%s Flight Mode", new_mode.c_str());
+        ROS_INFO("Entered %s Flight Mode.", new_mode.c_str());
     } else {
         ROS_ERROR("Failed to set flight mode!");
     }
 
 }
 
-void TeleopJoy::autoDescendAscend(bool autodepth) {
+void BluerovTeleop::autoDescendAscend(bool autodepth) {
 
     mavros_msgs::CommandLong srv;
     srv.request.command = (autodepth ? NAV_TAKEOFF_LOCAL : NAV_LAND_LOCAL);

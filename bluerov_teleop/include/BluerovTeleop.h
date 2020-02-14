@@ -14,6 +14,7 @@
 #include <bluerov_teleop/bluerov_teleopConfig.h>
 #include <mavros_msgs/CommandLong.h>
 #include <mavros_msgs/OverrideRCIn.h>
+#include <mavros_msgs/SetMode.h>
 #include <sound_play/sound_play.h>
 #include <vector>
 #include <math.h>
@@ -99,7 +100,7 @@ class BluerovTeleop {
         void setMode(std::string mode);
 
         // Auto descend/ascend to depth
-        void cmdTakeoffLand(bool autodepth);
+        void autoDescendAscend(bool autodepth);
 
         // Remaps F310 joystick values since d-pad buttons are treated as axes
         sensor_msgs::Joy::ConstPtr f310_RemapJoystick(const sensor_msgs::Joy::ConstPtr& f310);

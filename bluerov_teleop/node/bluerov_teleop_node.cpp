@@ -24,8 +24,6 @@ int main(int argc, char ** argv) {
     bluerov_teleop.spin();
 
 
-    ROS_INFO("BlueROV teleoperation ready.");
-
     //ros::spin();
 
     return 0;
