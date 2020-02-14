@@ -4,7 +4,7 @@
   <!-- Args -->
   <arg name="record_bag" default="false" />
   <arg name="enable_teleop" default="true" />
-  <arg name="enable_localization" default="false" />
+  <arg name="enable_localization" default="true" />
   <arg name="joystick" default="xbox" />        <!-- Values: f310 or xbox -->
 
   <!-- Machine Definitions -->
@@ -23,21 +23,15 @@
       </include>
   </group>
 
-  <!--<group if="$(arg enable_teleop)">
-      <include file="$(find bluerov_teleop)/launch/test_teleop.launch">
-          <arg name="machine" value="topside" />
-      </include>
-  </group>-->
-
   <!-- Launch UI -->
-  <!--<node name="rviz" pkg="rviz" type="rviz" args="-d $(find bluerov)/cfg/bluerov.rviz" machine="topside" />-->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find bluerov)/cfg/bluerov.rviz" machine="topside" />
 
 
   <!-- Visual odometry and EKF localization -->
   <group if="$(arg enable_localization)">
       <!-- Monocular visual odometer -->
       <node pkg="viso2_ros" type="mono_odometer" name="mono_odometer" machine="topside">
-        <remap from="image" to="camera/image" />
+        <remap from="image" to="raspicam_node/image/compressed" />-->
         <param name="base_link_frame_id" value="base_link" />
         <param name="odom_frame_id" value="odom" />
         <param name="max_features" value="10" />
