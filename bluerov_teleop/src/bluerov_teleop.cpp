@@ -1,6 +1,6 @@
 /*
  * File: bluerov_teleop/src/bluerov_teleop.cpp
- * Author: Antonella Wilby <antonella@explorationlabs.com>
+ * Author: Antonella Wilby <antonella@explorationlabs.org>
  * Date: Feb. 2020
  * Description: This software provides remote control (teleoperation) of the BlueROV2.
  *              This software was modified from the original teleoperation code in
