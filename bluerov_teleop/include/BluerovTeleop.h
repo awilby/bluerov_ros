@@ -14,6 +14,7 @@
 #include <bluerov_teleop/bluerov_teleopConfig.h>
 #include <mavros_msgs/CommandLong.h>
 #include <mavros_msgs/OverrideRCIn.h>
+#include <mavros_msgs/RCIn.h>
 #include <mavros_msgs/SetMode.h>
 #include <sound_play/sound_play.h>
 #include <vector>
@@ -68,6 +69,7 @@ class BluerovTeleop {
 
         // SoundPlay client for speaking responses for commands
         sound_play::SoundClient sc;
+        bool do_audible_responses; // Whether to speak responses to services aloud
 
 
         // Dynamic reconfigure

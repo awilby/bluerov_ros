@@ -3,6 +3,7 @@
   <arg name="machine" default="topside" />
   <arg name="initial_mode" default="manual" />  <!-- accepted values: manual, stabilized, depth -->
   <arg name="node_start_delay" default="1.0" />
+  <arg name="audible_responses" default="true" />
 
 
   <!-- Machine Definitions -->
@@ -20,6 +21,7 @@
     <param name="joystick" value="f310" type="string" />
     <param name="joy_topic" value="joy_f310" type="string" />
     <param name="initial_mode" value="$(arg initial_mode)" type="string" />
+    <param  name="audible_responses" value="$(arg audible_responses)" type="bool" />
   </node>
 
 </launch>

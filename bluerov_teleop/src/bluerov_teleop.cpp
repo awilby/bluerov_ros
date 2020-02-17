@@ -19,6 +19,7 @@ BluerovTeleop::BluerovTeleop(ros::NodeHandle* nodehandle):nh_(*nodehandle) {
     nh.param<std::string>("joystick", joystick, "");
     nh.param<std::string>("joy_topic", joy_topic, "joy");
     nh.param<std::string>("initial_mode", initial_mode, "manual");
+    nh.param<bool>("audible_responses", do_audible_responses, "true");
 
     // Set up dynamic reconfigure server
     dynamic_reconfigure::Server<bluerov_teleop::bluerov_teleopConfig>::CallbackType f;
