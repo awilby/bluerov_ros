@@ -1,89 +1,163 @@
 <?xml version="1.0"?>
 
 <robot name="bluerov">
-  <link name="base_link">
-    <visual>
-        <geometry>
-            <mesh filename="package://bluerov_robot/robot/bluerov2.dae"/>
-        </geometry>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-    </visual>
-  </link>
 
-  <!--<link name="fcu">
-    <visual>
-      <geometry>
-        <box size="0.10 .05 .01"/>
-      </geometry>
-      <material name="red">
-        <color rgba="1 0 0 1"/>
-      </material>
-    </visual>
-</link>-->
+    <!-- BlueROV -->
+    <link name="base_link">
+        <visual>
+            <geometry>
+                <mesh filename="package://bluerov_robot/robot/bluerov2.dae"/>
+            </geometry>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+        </visual>
+    </link>
 
-  <!-- <link name="enclosure">
-    <visual>
-      <geometry>
-        <cylinder length="0.02" radius="0.04"/>
-      </geometry>
-    </visual>
-  </link>
 
-  <link name="camera">
-    <visual>
-      <geometry>
-        <box size="0.06 .28 .03"/>
-      </geometry>
-      <origin rpy="0 0.05 0" xyz="-0.03 0 0"/>
-    </visual>
-  </link>
+    <!-- Cameras and Sensors -->
+    <link name="camera">
+      <origin xyz="-0.03 0 0" rpy="0 0.05 0" />
+    </link>
 
-  <link name="imu">
-    <visual>
-      <geometry>
-        <box size="0.326 0.206 .003"/>
-      </geometry>
-      <origin xyz="0 0 -0.0015"/>
-      <material name="polycarb">
-        <color rgba="1 1 1 0.4"/>
-      </material>
-    </visual>
-  </link> -->
+    <link name="fcu">
+      <origin xyz="0 0 -0.0015" rpy="todo" />
+    </link>
 
-  <!--<link name="thruster0">
-    <visual>
-      <geometry>
-        <cylinder length="0.100" radius="0.048"/>
-      </geometry>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <material name="black">
-        <color rgba="0 0 0 1"/>
-      </material>
-    </visual>
-  </link>
+    <link name="depth_sensor">
+        <origin xyz="todo" rpy="todo" />
+    <link>
 
-  <joint name="base_link_to_thruster0" type="fixed">
-    <parent link="base_link"/>
-    <child link="thruster0"/>
-    <origin rpy="0 0 0" xyz="0 0 0"/>
-  </joint>
 
-  <joint name="base_link_to_fcu" type="fixed">
-    <parent link="base_link"/>
-    <child link="fcu"/>
-    <origin rpy="0 0 0" xyz="0 0 0"/>
-</joint>-->
+    <joint name="base_link_to_camera" type="fixed">
+        <parent link="base_link" />
+        <child link="camera" />
+        <origin rpy="0 -0.05 0" xyz="-0.112 0.0 0.230"/>
+    </joint>
 
-  <!-- <joint name="base_link_to_camera_link" type="fixed">
-    <parent link="base_link"/>
-    <child link="camera_link"/>
-    <origin rpy="0 -0.05 0" xyz="-0.112 0.0 0.230"/>
-  </joint>
+    <joint name="base_link_to_fcu" type="fixed">
+        <parent link="base_link" />
+        <child link="fcu" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+    </joint>
 
-  <joint name="base_link_to_top_plate" type="fixed">
-    <parent link="base_link"/>
-    <child link="top_plate"/>
-    <origin xyz="0 0.0 0.147"/>
-  </joint> -->
+    <joint name="base_link_to_depth_sensor">
+        <parent link="base_link" />
+        <child link="depth_sensor" />
+        <origin xyz="todo" rpy="todo" />
+    </joint>
+
+
+
+
+    <!-- Thrusters -->
+
+    <link name="thruster0">
+      <origin xyz="todo" rpy="todo" />
+    </link>
+
+    <link name="thruster1">
+      <origin xyz="todo" rpy="todo" />
+    </link>
+
+    <link name="thruster2">
+      <origin xyz="todo" rpy="todo" />
+    </link>
+
+    <link name="thruster3">
+      <origin xyz="todo" rpy="todo" />
+    </link>
+
+    <link name="thruster4">
+      <origin xyz="todo" rpy="todo" />
+    </link>
+
+    <link name="thruster5">
+      <origin xyz="todo" rpy="todo" />
+    </link>
+
+
+    <joint name="base_link_to_thruster0" type="fixed">
+        <parent link="base_link" />
+        <child link="thruster0" />
+        <origin xyz="todo" rpy="todo" />
+    </joint>
+
+    <joint name="base_link_to_thruster1" type="fixed">
+        <parent link="base_link" />
+        <child link="thruster1" />
+        <origin xyz="todo" rpy="todo" />
+    </joint>
+
+    <joint name="base_link_to_thruster2" type="fixed">
+        <parent link="base_link" />
+        <child link="thruster2" />
+        <origin xyz="todo" rpy="todo" />
+    </joint>
+
+    <joint name="base_link_to_thruster3" type="fixed">
+        <parent link="base_link" />
+        <child link="thruster3" />
+        <origin xyz="todo" rpy="todo" />
+    </joint>
+
+    <joint name="base_link_to_thruster4" type="fixed">
+        <parent link="base_link" />
+        <child link="thruster4" />
+        <origin xyz="todo" rpy="todo" />
+    </joint>
+
+    <joint name="base_link_to_thruster5" type="fixed">
+        <parent link="base_link" />
+        <child link="thruster5" />
+        <origin xyz="todo" rpy="todo" />
+    </joint>
+
+    <!-- Additional Thrusters: Heavy Configuration -->
+
+    <link name="thruster6">
+      <origin xyz="todo" rpy="todo" />
+    </link>
+
+    <link name="thruster7">
+      <origin xyz="todo" rpy="todo" />
+    </link>
+
+
+    <joint name="base_link_to_thruster6" type="fixed">
+        <parent link="base_link" />
+        <child link="thruster6" />
+        <origin xyz="todo" rpy="todo" />
+    </joint>
+
+    <joint name="base_link_to_thruster7" type="fixed">
+        <parent link="base_link" />
+        <child link="thruster7" />
+        <origin xyz="todo" rpy="todo" />
+    </joint>
+
+
+
+
+    <!-- Uncomment and fill in correct origin data if using these additional sensors -->
+
+    <!--<link name="ping360">
+      <origin xyz="todo todo todo" rpy="todo todo todo" />
+    </link>-->
+
+    <!--<joint name="base_link_to_ping360" type="fixed">
+      <parent link="base_link" />
+      <child link="ping360" />
+      <origin xyz="todo todo todo" rpy="todo todo todo" />
+    </joint>-->
+
+    <!--<link name="gripper">
+      <origin xyz="todo todo todo" rpy="todo todo todo" />
+    </link>-->
+
+    <!--<joint name="base_link_to_gripper" type="">
+      <parent link="base_link" />
+      <child link="gripper" />
+      <origin xyz="todo todo todo" rpy="todo todo todo" />
+    </joint>-->
+
 
 </robot>
