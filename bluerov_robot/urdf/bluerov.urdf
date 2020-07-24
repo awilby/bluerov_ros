@@ -3,6 +3,9 @@
 <robot name="bluerov">
 
     <!-- BlueROV -->
+    <!-- XY-origin defined as center point of vehicle, Z-origin at top of battery housing. -->
+    <!-- +x: towards starboard. +y: towards front of vehicle. +z: upwards -->
+    <!-- Link units: xyz in meters, rpy in radians. -->
     <link name="base_link">
         <visual>
             <geometry>
@@ -14,35 +17,29 @@
 
 
     <!-- Cameras and Sensors -->
-    <link name="camera">
-      <origin xyz="-0.03 0 0" rpy="0 0.05 0" />
-    </link>
+    <link name="camera" />
 
-    <link name="fcu">
-      <origin xyz="0 0 -0.0015" rpy="todo" />
-    </link>
+    <link name="fcu" />
 
-    <link name="depth_sensor">
-        <origin xyz="todo" rpy="todo" />
-    <link>
+    <link name="depth_sensor" />
 
 
     <joint name="base_link_to_camera" type="fixed">
         <parent link="base_link" />
         <child link="camera" />
-        <origin rpy="0 -0.05 0" xyz="-0.112 0.0 0.230"/>
+        <origin xyz="0 0.16 0.075" rpy="0 0 0" />
     </joint>
 
     <joint name="base_link_to_fcu" type="fixed">
         <parent link="base_link" />
         <child link="fcu" />
-        <origin xyz="0 0 0" rpy="0 0 0" />
+        <origin xyz="0.03 0.115 0.08" rpy="1.571 0 0" />
     </joint>
 
-    <joint name="base_link_to_depth_sensor">
+    <joint name="base_link_to_depth_sensor" type="fixed">
         <parent link="base_link" />
         <child link="depth_sensor" />
-        <origin xyz="todo" rpy="todo" />
+        <origin xyz="-0.01 -0.18 0.05" rpy="0 0 0" />
     </joint>
 
 
@@ -50,88 +47,84 @@
 
     <!-- Thrusters -->
 
-    <link name="thruster0">
-      <origin xyz="todo" rpy="todo" />
-    </link>
+    <!-- Fore starboard vectored thruster -->
+    <link name="thruster1" />
 
-    <link name="thruster1">
-      <origin xyz="todo" rpy="todo" />
-    </link>
+    <!-- Fore port vectored thruster -->
+    <link name="thruster2" />
 
-    <link name="thruster2">
-      <origin xyz="todo" rpy="todo" />
-    </link>
+    <!--Aft starboard vectored thruster -->
+    <link name="thruster3" />
 
-    <link name="thruster3">
-      <origin xyz="todo" rpy="todo" />
-    </link>
+    <!-- Aft port vectored thruster -->
+    <link name="thruster4" />
 
-    <link name="thruster4">
-      <origin xyz="todo" rpy="todo" />
-    </link>
+    <!-- Base configuration: Midship starboard depth thruster -->
+    <!-- Heavy configuration: Forward starboard depth thruster -->
+    <link name="thruster5" />
 
-    <link name="thruster5">
-      <origin xyz="todo" rpy="todo" />
-    </link>
-
-
-    <joint name="base_link_to_thruster0" type="fixed">
-        <parent link="base_link" />
-        <child link="thruster0" />
-        <origin xyz="todo" rpy="todo" />
-    </joint>
+    <!-- Base configuration: Midship port depth thruster -->
+    <!-- Heavy configuration: Forward port depth thruster -->
+    <link name="thruster6" />
 
     <joint name="base_link_to_thruster1" type="fixed">
         <parent link="base_link" />
         <child link="thruster1" />
-        <origin xyz="todo" rpy="todo" />
+        <origin xyz="0.120 0.165 0" rpy="0 0 -0.785" />
+        <!--<limit lower="-40.18" upper="49.98"/> -->   <!-- todo: joint from thruster to prop -->
     </joint>
 
     <joint name="base_link_to_thruster2" type="fixed">
         <parent link="base_link" />
         <child link="thruster2" />
-        <origin xyz="todo" rpy="todo" />
+        <origin xyz="-0.120 0.165 0" rpy="0 0 0.785" />
     </joint>
 
     <joint name="base_link_to_thruster3" type="fixed">
         <parent link="base_link" />
         <child link="thruster3" />
-        <origin xyz="todo" rpy="todo" />
+        <origin xyz="0.120 -0.155 0" rpy="0 0 2.356" />
     </joint>
 
     <joint name="base_link_to_thruster4" type="fixed">
         <parent link="base_link" />
         <child link="thruster4" />
-        <origin xyz="todo" rpy="todo" />
+        <origin xyz="-0.120 -0.155 0" rpy="0 0 -2.356" />
     </joint>
 
     <joint name="base_link_to_thruster5" type="fixed">
         <parent link="base_link" />
         <child link="thruster5" />
-        <origin xyz="todo" rpy="todo" />
+        <!--<origin xyz="0.215 0 0.075" rpy="0 1.571 0" />-->        <!-- Base configuration: midship starboard -->
+        <origin xyz="0.215 0.125 0.075" rpy="0 1.571 0" />           <!-- Heavy configuration: forward starboard -->
     </joint>
-
-    <!-- Additional Thrusters: Heavy Configuration -->
-
-    <link name="thruster6">
-      <origin xyz="todo" rpy="todo" />
-    </link>
-
-    <link name="thruster7">
-      <origin xyz="todo" rpy="todo" />
-    </link>
-
 
     <joint name="base_link_to_thruster6" type="fixed">
         <parent link="base_link" />
         <child link="thruster6" />
-        <origin xyz="todo" rpy="todo" />
+        <!--<origin xyz="-0.215 0 0.075" rpy="0 1.571 0" />-->       <!-- Base configuration: midship port -->
+        <origin xyz="-0.215 0.125 0.075" rpy="0 1.571 0" />          <!-- Heavy configuration: forward port -->
     </joint>
+
+    <!-- Additional Thrusters: Heavy Configuration -->
+
+    <!-- Aft starboard depth thruster -->
+    <link name="thruster7" />
+
+    <!-- Aft port depth thruster -->
+    <link name="thruster8" />
+
 
     <joint name="base_link_to_thruster7" type="fixed">
         <parent link="base_link" />
         <child link="thruster7" />
-        <origin xyz="todo" rpy="todo" />
+        <origin xyz="0.215 -0.120 0.075" rpy="0 1.571 0" />          <!-- Heavy configuration: aft starboard -->
+    </joint>
+
+    <joint name="base_link_to_thruster8" type="fixed">
+        <parent link="base_link" />
+        <child link="thruster8" />
+        <origin xyz="-0.215 -0.120 0.075" rpy="0 1.571 0" />         <!-- Heavy configuration: aft port -->
     </joint>
 
 
@@ -139,9 +132,7 @@
 
     <!-- Uncomment and fill in correct origin data if using these additional sensors -->
 
-    <!--<link name="altimeter">
-      <origin xyz="todo todo todo" rpy="todo todo todo" />
-    </link>-->
+    <!--<link name="altimeter" />-->
 
     <!--<joint name="base_link_to_altimeter" type="fixed">
       <parent link="base_link" />
@@ -149,9 +140,7 @@
       <origin xyz="todo todo todo" rpy="todo todo todo" />
     </joint>-->
 
-    <!--<link name="ping360">
-      <origin xyz="todo todo todo" rpy="todo todo todo" />
-    </link>-->
+    <!--<link name="ping360" />-->
 
     <!--<joint name="base_link_to_ping360" type="fixed">
       <parent link="base_link" />
@@ -159,9 +148,7 @@
       <origin xyz="todo todo todo" rpy="todo todo todo" />
     </joint>-->
 
-    <!--<link name="gripper">
-      <origin xyz="todo todo todo" rpy="todo todo todo" />
-    </link>-->
+    <!--<link name="gripper" />-->
 
     <!--<joint name="base_link_to_gripper" type="">
       <parent link="base_link" />
